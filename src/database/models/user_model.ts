@@ -1,25 +1,22 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelizeConnection from '../config';
 
-interface CardAttributes {
-  // id: number;
+interface UserAttributes {
   name: string;
-  balance: number;
-  type: string;
-  // bank: string;
-  date: Date;
+  email: string;
+  password: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
-// export type CardInput = Optional<CardAttributes>;
-export type CardOuput = Required<CardAttributes>;
+// export type UserInput = Optional<UserAttributes>;
+export type UserOutput = Required<UserAttributes>;
 
-class Card extends Model<CardAttributes> implements CardAttributes {
+class User extends Model<UserAttributes> implements UserAttributes {
+  public id!: number;
   public name!: string;
-  public balance!: number;
-  public type!: string;
-  public date!: Date;
+  public email!: string;
+  public password!: string;
 
   // timestamps!
   public readonly createdAt!: Date;
@@ -27,22 +24,19 @@ class Card extends Model<CardAttributes> implements CardAttributes {
   public readonly deletedAt!: Date;
 }
 
-Card.init(
+User.init(
   {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    balance: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    type: {
+    email: {
       type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
     },
-    date: {
-      type: DataTypes.DATEONLY,
+    password: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },
@@ -53,5 +47,5 @@ Card.init(
   },
 );
 
-export default Card;
+export default User;
 

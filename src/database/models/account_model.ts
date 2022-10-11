@@ -1,25 +1,25 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelizeConnection from '../config';
 
-interface CardAttributes {
-  // id: number;
+interface AccountAttributes {
   name: string;
   balance: number;
-  type: string;
-  // bank: string;
-  date: Date;
+  isCredit: boolean;
+  // closure?: Date;
+  // minFee?: number;
+  // totalFee?: number;
+
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
-// export type CardInput = Optional<CardAttributes>;
-export type CardOuput = Required<CardAttributes>;
+// export type AccountInput = Optional<AccountAttributes>;
+export type AccountOutput = Required<AccountAttributes>;
 
-class Card extends Model<CardAttributes> implements CardAttributes {
+class Account extends Model<AccountAttributes> implements AccountAttributes {
+  public id!: number;
   public name!: string;
   public balance!: number;
-  public type!: string;
-  public date!: Date;
 
   // timestamps!
   public readonly createdAt!: Date;
@@ -27,7 +27,7 @@ class Card extends Model<CardAttributes> implements CardAttributes {
   public readonly deletedAt!: Date;
 }
 
-Card.init(
+Account.init(
   {
     name: {
       type: DataTypes.STRING,
@@ -35,14 +35,7 @@ Card.init(
     },
     balance: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    type: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    date: {
-      type: DataTypes.DATEONLY,
+      defaultValue: 0,
       allowNull: false,
     },
   },
@@ -53,5 +46,5 @@ Card.init(
   },
 );
 
-export default Card;
+export default Account;
 

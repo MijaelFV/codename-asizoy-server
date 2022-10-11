@@ -1,24 +1,12 @@
 services:
-# alkemydb:
-#   image: postgres
-#   container_name: alkemy-database
-#   ports:
-#     - '5432:5432'
-#   volumes:
-#     - './postgres_data:/var/lib/postgresql/data'
-#   environment:
-#     POSTGRES_DB: alkemydb
-#     POSTGRES_USER: alkemyuser
-#     POSTGRES_PASSWORD: alkemy
-
   asizoydb:
     image: mariadb
     container_name: asizoy-db
     environment:
-      MARIADB_DATABASE: 'challengedb'
+      MARIADB_DATABASE: 'asizoydb'
       MARIADB_USER: 'asizoyuser'
-      MARIADB_PASSWORD: 'user'
-      MARIADB_ROOT_PASSWORD: 'adminroot'
+      MARIADB_PASSWORD: 'userpwrd'
+      MARIADB_ROOT_PASSWORD: 'rootpwrd'
     ports:
       - '3306:3306'
     volumes:

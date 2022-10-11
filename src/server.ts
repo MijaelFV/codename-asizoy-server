@@ -1,10 +1,11 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
-import readDir from './helpers/handle-routes';
-import db from './database/config';
 import express from 'express';
-import { IDirInfo } from './interfaces/readDir';
+import db from './database/config';
+import dbInit from './database/init';
+import entryRouter from './api/routes/entry_route';
+import userRouter from './api/routes/user_route';
+import authRouter from './api/routes/auth_route';
 
 class Server {
   private app;
@@ -27,6 +28,7 @@ class Server {
   async dbConnection() {
     try {
       await db.authenticate();
+      dbInit();
       console.log('Database online');
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -36,20 +38,9 @@ class Server {
   }
 
   async apiRoutes() {
-    // This handles the automatic creation of routes by taking files ending with "_route" in the routes folder
-    const _route = '/api';
-    const _path = path.join(__dirname, 'routes');
-    const _replace = '_route';
-    const routes = (await readDir(_path, _replace)) as IDirInfo[];
-
-    routes.map((route) => {
-      const apiPath = path.join(_route, route.name).replace(/[\\]/g, '/');
-      const filePath = path.join(_path, route.filename);
-
-      // import file from `${filePath}`;
-
-      import(`${filePath}`).then((file) => this.app.use(apiPath, file));
-    });
+    this.app.use('/entry', entryRouter);
+    this.app.use('/user', userRouter);
+    this.app.use('/auth', authRouter);
   }
 
   middlewares() {

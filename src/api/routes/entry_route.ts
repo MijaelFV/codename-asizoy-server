@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import { entryController } from '../controllers/index';
 
-const router = Router();
+const entryRouter = Router();
 
 // router.get('/', [], entryController.getEntries);
 
-router.get('/:id', [], entryController.getEntry);
+entryRouter.get('/:id', [], entryController.getEntry);
 
 // router.put(
 //   '/:id',
@@ -19,7 +19,7 @@ router.get('/:id', [], entryController.getEntry);
 //   entryController.putEntry,
 // );
 
-router.post(
+entryRouter.post(
   '/',
   [
     check('concept').not().isEmpty().withMessage('Concept is required').isLength({ min: 2 }).withMessage('Must be at least 2 characters long'),
@@ -33,5 +33,5 @@ router.post(
 
 // router.delete('/:id', [], entryController.deleteEntry);
 
-module.exports = router;
+export default entryRouter;
 

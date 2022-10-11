@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
-import { Entry } from '../database/models';
+import { User } from '../../database/models';
+import generateJWT from '../../helpers/generate-jwt';
+import bcryptjs from 'bcryptjs';
+import handleErrors from '../../helpers/handle-errors';
 
 // const getEntries = async (req: Request, res: Response) => {
 //   const { id } = req.user;
@@ -56,37 +59,40 @@ import { Entry } from '../database/models';
 //   }
 // };
 
-const getEntry = async (req: Request, res: Response) => {
-  const { id } = req.params;
+// const getUser = async (req: Request, res: Response) => {
+//   const { id } = req.params;
 
-  try {
-    const entry = await Entry.findByPk(id);
+//   try {
+//     const user = await User.findByPk(id);
 
-    res.status(200).json(entry);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: 'Contact the administrator',
-    });
-  }
-};
+//     res.status(200).json(user);
+//   } catch (error) {
+//     handleErrors(res, error);
+//   }
+// };
 
-const postEntry = async (req: Request, res: Response) => {
-  // const { id } = req.user;
-  const { concept, amount, type, date } = req.body;
+// const postUser = async (req: Request, res: Response) => {
+//   const { name } = req.body;
+//   let { email, password } = req.body;
 
-  try {
-    const entry = Entry.build({ concept, amount, type, date });
-    await entry.save();
+//   email = email.toLowerCase();
 
-    res.status(201).json(entry);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      msg: 'Contact the administrator',
-    });
-  }
-};
+//   try {
+//     // Encrypt password
+//     const salt = bcryptjs.genSaltSync();
+//     password = bcryptjs.hashSync(password, salt);
+
+//     const user = User.build({ name, email, password });
+//     await user.save();
+
+//     // JsonWebToken
+//     const token = await generateJWT(user.id, user.name);
+
+//     res.status(201).json({ user, token });
+//   } catch (error) {
+//     handleErrors(res, error);
+//   }
+// };
 
 // const putEntry = async (req: Request, res: Response) => {
 //   const { id } = req.params;
@@ -130,8 +136,8 @@ const postEntry = async (req: Request, res: Response) => {
 
 export default {
   // getEntries,
-  getEntry,
+  // getUser,
   // putEntry,
-  postEntry,
+  // postUser,
   // deleteEntry,
 };

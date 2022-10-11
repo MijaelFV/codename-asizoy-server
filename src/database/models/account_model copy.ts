@@ -1,22 +1,25 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelizeConnection from '../config';
 
-interface EntryAttributes {
-  // id: number;
+interface AccountAttributes {
   name: string;
-  email: string;
-  password: string;
+  balance: number;
+  isCredit: boolean;
+  // closure?: Date;
+  // minFee?: number;
+  // totalFee?: number;
+
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
 }
-// export type EntryInput = Optional<EntryAttributes>;
-export type EntryOuput = Required<EntryAttributes>;
+// export type AccountInput = Optional<AccountAttributes>;
+export type AccountOutput = Required<AccountAttributes>;
 
-class Entry extends Model<EntryAttributes> implements EntryAttributes {
+class Account extends Model<AccountAttributes> implements AccountAttributes {
+  public id!: number;
   public name!: string;
-  public email!: string;
-  public password!: string;
+  public balance!: number;
 
   // timestamps!
   public readonly createdAt!: Date;
@@ -24,19 +27,15 @@ class Entry extends Model<EntryAttributes> implements EntryAttributes {
   public readonly deletedAt!: Date;
 }
 
-Entry.init(
+Account.init(
   {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-    },
-    password: {
-      type: DataTypes.STRING,
+    balance: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
       allowNull: false,
     },
   },
@@ -47,5 +46,5 @@ Entry.init(
   },
 );
 
-export default Entry;
+export default Account;
 

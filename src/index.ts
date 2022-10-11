@@ -1,7 +1,5 @@
-// require('dotenv').config();
+import '../env';
 import Server from './server';
 
 const server = new Server();
 server.listen();
-
-module.exports = server;

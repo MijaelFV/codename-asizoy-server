@@ -7,7 +7,7 @@ const readDir = (folder = '', replace = '') => {
     const info: IDirInfo[] = [];
     fs.readdirSync(folder).forEach((file) => {
       const extension = file.slice(-2, file.length);
-      if (extension !== 'js') return;
+      if (extension !== 'ts') return;
 
       const filename = file.slice(0, -3);
       const name = filename.replace(replace, '');

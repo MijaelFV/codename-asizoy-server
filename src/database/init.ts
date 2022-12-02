@@ -1,19 +1,14 @@
-import { Bank, Card, Entry, User } from './models';
+import { Account, Entry, User } from './models';
 
 const dbInit = () => {
   User.hasMany(Entry, { onDelete: 'CASCADE', onUpdate: 'CASCADE', foreignKey: { name: 'userId', allowNull: false } });
   Entry.belongsTo(User, { foreignKey: { name: 'userId', allowNull: false } });
 
-  Entry.hasOne(Bank, { onDelete: 'CASCADE', onUpdate: 'CASCADE', foreignKey: { name: 'userId', allowNull: false } });
-  Bank.belongsTo(Entry, { foreignKey: { name: 'userId', allowNull: false } });
+  User.hasMany(Account, { onDelete: 'CASCADE', onUpdate: 'CASCADE', foreignKey: { name: 'userId', allowNull: false } });
+  Account.belongsTo(User, { foreignKey: { name: 'userId', allowNull: false } });
 
-  User.hasMany(Card, { onDelete: 'CASCADE', onUpdate: 'CASCADE', foreignKey: { name: 'userId' } });
-  Card.belongsTo(User, { foreignKey: { name: 'userId' } });
-
-  User.sync();
-  Entry.sync();
-  Bank.sync();
-  Card.sync();
+  Account.hasMany(Entry, { onDelete: 'CASCADE', onUpdate: 'CASCADE', foreignKey: { name: 'accountId', allowNull: false } });
+  Entry.belongsTo(Account, { foreignKey: { name: 'accountId', allowNull: false } });
 };
 
 export default dbInit;

@@ -8,6 +8,12 @@ const constants = {
   emailNotFound: {
     msg: '404VD: The email entered does not belong to a user',
   },
+  entryNotFound: {
+    msg: '404VD: The entry entered does not belong to a user',
+  },
+  accountNotFound: {
+    msg: '404VD: The account requested does not exist',
+  },
 };
 
 export default constants;

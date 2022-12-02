@@ -25,14 +25,12 @@ interface EntryAttributes {
   */
 
   concept: string;
-  note: string;
+  note?: string;
   amount: number;
   type: entryType;
-  quoted: boolean;
+  quoted?: boolean;
   // categories?: Category[];
   // tags?: Tag[];
-  // account?: Account;
-  // destination?: Destination;
   isFulfilled: boolean;
   current?: number;
   from?: number;
@@ -40,25 +38,27 @@ interface EntryAttributes {
   group?: string;
   period: string;
   date: Date;
-  // userId: User;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+  userId?: number;
+  accountId?: number;
+  destinationId?: number;
+  // createdAt?: Date;
+  // updatedAt?: Date;
+  // deletedAt?: Date;
 }
-// export type EntryInput = Optional<EntryAttributes>;
+
 export type EntryOutput = Required<EntryAttributes>;
 
 class Entry extends Model<EntryAttributes> implements EntryAttributes {
   public id!: number;
   public concept!: string;
-  public note!: string;
+  public note?: string;
   public amount!: number;
   public type!: entryType;
-  public quoted!: boolean;
+  public quoted?: boolean;
   // public categories: Category;
   // public tags: Tag;
   // public account: Account;
-  // public destination: Desstination;
+  // public destination: Destination;
   public isFulfilled!: boolean;
   public current?: number;
   public from?: number;
@@ -69,6 +69,8 @@ class Entry extends Model<EntryAttributes> implements EntryAttributes {
 
   // relations
   public readonly userId!: number;
+  public readonly accountId!: number;
+  public readonly destinationId?: number;
 
   // timestamps!
   public readonly createdAt!: Date;
@@ -84,7 +86,7 @@ Entry.init(
     },
     note: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     amount: {
       type: DataTypes.INTEGER,
@@ -96,10 +98,12 @@ Entry.init(
     },
     quoted: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false,
     },
     isFulfilled: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false,
     },
     current: {

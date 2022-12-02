@@ -1,37 +1,48 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
+import validateJWT from '../../middleware/validate-jwt';
 import { entryController } from '../controllers/index';
+import validateFields from '../../middleware/validate-fields';
 
 const entryRouter = Router();
 
-// router.get('/', [], entryController.getEntries);
+entryRouter.get('/', [
+  validateJWT,
+  validateFields
+], entryController.getEntries);
 
-entryRouter.get('/:id', [], entryController.getEntry);
+entryRouter.get('/:id', [
+  validateJWT,
+  validateFields
+], entryController.getEntry);
 
-// router.put(
-//   '/:id',
-//   [
-//     check('concept').not().isEmpty().withMessage('Concept is required').isLength({ min: 2 }).withMessage('Must be at least 2 characters long'),
-//     check('amount').not().isEmpty().withMessage('Amount is required').isLength({ min: 1 }).withMessage('Must be at least 1 characters long'),
-//     check('category').not().isEmpty().withMessage('Category is required'),
-//     check('date').not().isEmpty().withMessage('Date is required').isDate().withMessage('Must be a valid date'),
-//   ],
-//   entryController.putEntry,
-// );
+entryRouter.put('/:id', [], entryController.putEntry);
 
 entryRouter.post(
   '/',
   [
-    check('concept').not().isEmpty().withMessage('Concept is required').isLength({ min: 2 }).withMessage('Must be at least 2 characters long'),
-    check('amount').not().isEmpty().withMessage('Amount is required').isLength({ min: 1 }).withMessage('Must be at least 1 characters long'),
-    check('type').not().isEmpty().withMessage('Type is required').isIn(['income', 'expense']).withMessage('The entry must be an income or an expense'),
-    check('category').not().isEmpty().withMessage('Category is required'),
-    check('date').not().isEmpty().withMessage('Date is required').isDate().withMessage('Must be a valid date'),
+    validateJWT,
+    check('accountId')
+      .not().isEmpty().withMessage('AccountID is required'),
+    check('concept')
+      .not().isEmpty().withMessage('Concept is required'),
+    check('amount')
+      .not().isEmpty().withMessage('Amount is required'),
+    check('type')
+      .not().isEmpty().withMessage('Type is required')
+      .isIn(['income', 'expense']).withMessage('The entry must be an income or an expense'),
+    check('quoted')
+      .not().isEmpty().withMessage('Quoted is required'),
+    check('isFulfilled')
+      .not().isEmpty().withMessage('isFulfilled is required'),
+    check('date')
+      .not().isEmpty().withMessage('Date is required'),
+    validateFields,
   ],
   entryController.postEntry,
 );
 
-// router.delete('/:id', [], entryController.deleteEntry);
+entryRouter.delete('/:id', [], entryController.deleteEntry);
 
 export default entryRouter;
 

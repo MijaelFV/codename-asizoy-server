@@ -2,61 +2,59 @@ import { Request, Response } from 'express';
 import { Entry } from '../../database/models';
 import handleErrors from '../../helpers/handle-errors';
 import { EntryOutput } from '../../database/models/entry_model';
+import constants from '../../utils/constants';
 
-// const getEntries = async (req: Request, res: Response) => {
-//   const { id } = req.user;
+const getEntries = async (req: Request, res: Response) => {
+  const { id } = req.user;
 
-//   try {
-//     const entries = await Entry.findAll({
-//       limit: 10,
-//       where: {
-//         userId: id,
-//       },
-//       attributes: ['id', 'concept', 'amount', 'type', 'date'],
-//       // include: [
-//       //   {
-//       //     model: Category,
-//       //     attributes: ['name', 'id'],
-//       //   },
-//       // ],
-//       order: [['date', 'DESC']],
-//     });
+  try {
+    const entries = await Entry.findAll({
+      limit: 10,
+      where: {
+        userId: id,
+      },
+      attributes: ['id', 'concept', 'amount', 'type', 'date'],
+      // include: [
+      //   {
+      //     model: Category,
+      //     attributes: ['name', 'id'],
+      //   },
+      // ],
+      order: [['date', 'DESC']],
+    });
 
-//     const allEntries = await Entry.findAll({
-//       attributes: ['amount', 'type'],
-//       where: {
-//         userId: id,
-//       },
-//     });
+    const allEntries = await Entry.findAll({
+      attributes: ['amount', 'type'],
+      where: {
+        userId: id,
+      },
+    });
 
-//     let totalExpenses = 0;
-//     let totalIncomes = 0;
+    let totalExpenses = 0;
+    let totalIncomes = 0;
 
-//     allEntries
-//       .filter((e) => e.type === 'income')
-//       .forEach((item) => {
-//         totalIncomes += item.amount;
-//       });
+    allEntries
+      .filter((e) => e.type === 'income')
+      .forEach((item) => {
+        totalIncomes += item.amount;
+      });
 
-//     allEntries
-//       .filter((e) => e.type === 'expense')
-//       .forEach((item) => {
-//         totalExpenses += item.amount;
-//       });
+    allEntries
+      .filter((e) => e.type === 'expense')
+      .forEach((item) => {
+        totalExpenses += item.amount;
+      });
 
-//     const balance = totalIncomes - totalExpenses;
+    const balance = totalIncomes - totalExpenses;
 
-//     res.status(200).json({
-//       entries,
-//       balance,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       msg: 'Contact the administrator',
-//     });
-//   }
-// };
+    res.status(200).json({
+      entries,
+      balance,
+    });
+  } catch (error) {
+    handleErrors(res, error);
+  }
+};
 
 const getEntry = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -71,84 +69,92 @@ const getEntry = async (req: Request, res: Response) => {
 };
 
 const postEntry = async (req: Request, res: Response) => {
-  // const { id } = req.user;
-  const { concept, amount, type } = req.body as EntryOutput;
+  const { id } = req.user;
+  const body = req.body as EntryOutput;
 
-  // const testCuotas = {
-  //   concept: 'Televisor Samsung',
-  //   categories: ['Tecnologia', 'Programacion'],
-  //   payments: [
-  //     {
-  //       type: 'credit',
-  //       amount: 2500,
-  //       date: '18/10/22',
-  //     },
-  //     {
+  const data: EntryOutput = {
+    concept: body.concept,
+    note: body.note,
+    amount: body.amount,
+    type: body.type,
+    quoted: body.quoted,
+    isFulfilled: body.isFulfilled,
+    current: body.current,
+    from: body.from,
+    to: body.to,
+    group: body.group,
+    period: new Date(body.date).toLocaleDateString(),
+    date: body.date,
+    userId: id,
+    accountId: body.accountId,
+    destinationId: body.destinationId,
+  };
 
-  //       amount: 3000,
-  //       date: '18/10/22',
-  //     },
-  //     {
-  //       amount: 3000,
-  //       date: '18/10/22',
-  //     },
-  //   ],
-  // };
+  try {
+    const entry = Entry.build(data);
+    await entry.save();
 
-  // try {
-  //   const entry = Entry.build({ concept, amount, type, date });
-  //   await entry.save();
-
-  //   res.status(201).json(entry);
-  // } catch (error) {
-  //   handleErrors(res, error);
-  // }
+    res.status(201).json(entry);
+  } catch (error) {
+    handleErrors(res, error);
+  }
 };
 
-// const putEntry = async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const { concept, amount, category, date } = req.body;
+const putEntry = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const body = req.body as EntryOutput;
 
-//   try {
-//     const entry = await Entry.findByPk(id);
+  const entry = await Entry.findByPk(id);
 
-//     const data = {
-//       concept: concept || entry.concept,
-//       amount: amount || entry.amount,
-//       categoryId: category || entry.categoryId,
-//       date: date || entry.date,
-//     };
+  const data = {
+    concept: body.concept ?? entry?.concept,
+    note: body.note ?? entry?.note,
+    amount: body.amount ?? entry?.amount,
+    type: body.type ?? entry?.type,
+    quoted: body.quoted ?? entry?.quoted,
+    isFulfilled: body.isFulfilled ?? entry?.isFulfilled,
+    current: body.current ?? entry?.current,
+    from: body.from ?? entry?.from,
+    to: body.to ?? entry?.to,
+    group: body.group ?? entry?.group,
+    period: new Date(body.date).toLocaleDateString() ?? entry?.date,
+    date: body.date ?? entry?.date,
+    accountId: body.accountId ?? body.accountId,
+  } as EntryOutput;
 
-//     await entry.update(data);
-//     res.status(200).json(entry);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       msg: 'Contact the administrator',
-//     });
-//   }
-// };
+  try {
+    if (entry) {
+      await entry.update(data);
+      res.status(200).json(entry);
+    } else {
+      throw new Error(constants.entryNotFound.msg);
+    }
+  } catch (error) {
+    handleErrors(res, error);
+  }
+};
 
-// const deleteEntry = async (req: Request, res: Response) => {
-//   const { id } = req.params;
+const deleteEntry = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
-//   try {
-//     const entry = await Entry.findByPk(id);
+  try {
+    const entry = await Entry.findByPk(id);
 
-//     await entry.destroy();
-//     res.status(200).json(entry);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       msg: 'Contact the administrator',
-//     });
-//   }
-// };
+    if (entry) {
+      await entry?.destroy();
+      res.status(200).json(entry);
+    } else {
+      throw new Error(constants.entryNotFound.msg);
+    }
+  } catch (error) {
+    handleErrors(res, error);
+  }
+};
 
 export default {
-  // getEntries,
+  getEntries,
   getEntry,
-  // putEntry,
+  putEntry,
   postEntry,
-  // deleteEntry,
+  deleteEntry,
 };
